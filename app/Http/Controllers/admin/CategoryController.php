@@ -58,7 +58,7 @@ class CategoryController extends Controller
               $category->save();
             }
 
- 
+
             $request->session()->flash('success', 'Category added successfully');
              
             return response()->json([
