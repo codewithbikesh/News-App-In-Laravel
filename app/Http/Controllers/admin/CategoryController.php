@@ -86,6 +86,7 @@ class CategoryController extends Controller
    public function update($categoryID, Request $request){
     $category = Category::find($categoryID);
     if(empty($category)){
+    $request->session()->flash('error', 'Category not found');
       return response()->json([
         'status'=> false,
         'notFound' => true,
