@@ -146,6 +146,8 @@ class CategoryController extends Controller
    }
 
 
+  //  Delete the category data from database code line from over here 
+  //  Delete the category data from database code line from over here 
    public function destory($categoryId, Request $request){
     $category = Category::find($categoryId);
     if(empty($category)){
