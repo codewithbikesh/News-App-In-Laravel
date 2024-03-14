@@ -10,6 +10,8 @@
 		<link rel="stylesheet" href="{{asset('admin-assets/plugins/fontawesome-free/css/all.min.css')}}">
 		{{-- dropzone plugin css  --}}
 		<link rel="stylesheet" href="{{asset('admin-assets/plugins/dropzone/min/dropzone.min.css')}}">
+		 {{-- summernote plugin css  --}}
+		<link rel="stylesheet" href="{{asset('admin-assets/plugins/summernote/summernote.min.css')}}">
 		<!-- Theme style -->
 		<link rel="stylesheet" href="{{asset('admin-assets/css/adminlte.min.css')}}">
 		<link rel="stylesheet" href="{{asset('admin-assets/css/custom.css')}}">
@@ -88,6 +90,8 @@
 		
 		{{-- dropzone plugin  --}}
 		<script src="{{asset('admin-assets/plugins/dropzone/min/dropzone.min.js')}}"></script>
+        {{-- summernote plugin js  --}}
+		<script src="{{asset('admin-assets/plugins/summernote/summernote.min.js')}}"></script>
 
         <script type="text/javascript">
             $.ajaxSetup({
@@ -95,6 +99,12 @@
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
             });
+
+			$(document).ready(function() {
+				$(".summernote").summernote({
+					height: 250,
+				});
+			});
             </script>
         @yield('costomJs')
 	</body>

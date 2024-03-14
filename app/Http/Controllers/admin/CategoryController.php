@@ -104,8 +104,7 @@ class CategoryController extends Controller
       $category->slug = $request->slug;
       $category->status = $request->status;
       $category->save();
-
-         $oldImage = $category->image;
+      $oldImage = $category->image;
 
       // Save Image Here 
       if(!empty($request->image_id)){

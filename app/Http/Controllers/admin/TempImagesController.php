@@ -5,6 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\TempImage;
+use Nette\Utils\Image; // Import Image facade
 
 class TempImagesController extends Controller
 {
@@ -18,10 +19,19 @@ class TempImagesController extends Controller
             $tempImage->name = $newName;
             $tempImage->save();
             $image->move(public_path().'/temp',$newName);
+           
+
+            // Generate thumbnail
+            $sourcePath = public_path().'/temp'.$newName;
+            $destPath = public_path().'/temp/thumb'.$newName;
+            $image = Image::make($sourcePath);
+            $image->fit(200,275);
+            $image->save($destPath);
 
             return response()->json([
                 'status' => true,
                 'image_id' => $tempImage->id,
+                'ImagePath' => asset('/temp/thumb/'.$newName),
                 'message' => 'Image uploaded successfully'
             ]);
     }
