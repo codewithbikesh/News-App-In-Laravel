@@ -6,12 +6,27 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Brand;
 use App\Models\Product;
+use App\Models\ProductImage;
+use App\Models\TempImage;
 use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Nette\Utils\Image; // Import Image facade
+
 
 class ProductController extends Controller
 {
+    public function index(Request $request){
+         $products = Product::latest('id')->with('product_images');
+
+            if($request->get('keyword') !=""){
+                $products = $products->where('title','like','%'.$request->keyword.'%');
+            }
+
+         $products = $products->paginate();
+         $data['products'] = $products;
+         return view('admin.products.list',$data);
+    }
     public function create(){
         $data = [];
         $categories = Category::orderBy('name', 'ASC')->select('id', 'name')->get();
@@ -23,8 +38,7 @@ class ProductController extends Controller
     }
 
     public function store(request $request){
-        
-     
+
        $rules = [
        'title' =>'required',
        'slug' =>'required|unique:products',
@@ -57,6 +71,41 @@ class ProductController extends Controller
         $product->brand_id = $request->brand;
         $product->is_featured = $request->is_featured;
         $product->save();
+
+        // Save Gallery Pics 
+        if(!empty($request->image_array)){
+            foreach($request->image_array as $temp_image_id){
+               $tempImageInfo = TempImage::find($temp_image_id);
+               $extArray = explode('.',$tempImageInfo->name);
+               $ext = last($extArray);
+
+                $productImage = new ProductImage();
+                $productImage->image_id = $product->id;
+                $productImage->image = 'Null';  
+                $productImage->save();        
+
+                $imageName = $product->id.'-'.$productImage->id.'-'.time().'.'.$ext;
+                $productImage->image = $imageName;
+                $productImage->save();
+
+                // Generate Product Thumbnails 
+
+                // Large image 
+                $sourcePath = public_path().'/temp/'.$tempImageInfo->name;
+                $destPath = public_path().'/uploads/product/large/'.$imageName;
+                $image = Image::make($sourcePath);
+                $image->resize(1400, null, function ($contraint){
+                    $contraint->aspectRatio();
+                });
+                $image->save($destPath );
+
+                // Small Image 
+                $destPath = public_path().'/uploads/product/small/'.$imageName;
+                $image = Image::make($sourcePath);
+                $image->fit(300,300);
+                $image->save($destPath );
+              }
+        }
 
         $request->session()->flush('success','Product added successfully');
 

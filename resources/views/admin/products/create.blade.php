@@ -8,7 +8,7 @@
                 <h1>Create Product</h1>
             </div>
             <div class="col-sm-6 text-right">
-                <a href="products.html" class="btn btn-primary">Back</a>
+                <a href="{{ route('products.index') }}" class="btn btn-primary">Back</a>
             </div>
         </div>
     </div>
@@ -182,7 +182,7 @@
         
         <div class="pb-5 pt-3">
             <button type="submit" class="btn btn-primary">Create</button>
-            <a href="products.html" class="btn btn-outline-dark ml-3">Cancel</a>
+            <a href="{{ route('products.index') }}" class="btn btn-outline-dark ml-3">Cancel</a>
         </div>
     </div>
 </form>
@@ -219,15 +219,11 @@ $("#productForm").submit(function(event) {
         dataType: 'json',
         success: function(response) {
           if(response['status'] == true) {
-             
+            $(".error").removeClass('invalid-feedback').html('');
+            $("input[type='text'], select, input[type='number']").removeClass('is-invalid');
+              window.location.href="{{ route('products.index') }}";
           }else{
             var errors = response['errors'];
-            // if(errors['title']){
-            //     $("#title").addClass('is-invalid').siblings('p').addClass('invalid-feedback').html(errors['title']);
-            // }else{
-            //     $("#title").removeClass('is-invalid').siblings('p').removeClass('invalid-feedback').html("");
-            // }
-
             $(".error").removeClass('invalid-feedback').html('');
             $("input[type='text'], select, input[type='number']").removeClass('is-invalid');
             $.each(errors,function(key,value){
@@ -263,13 +259,6 @@ $("#category").change(function() {
 
 Dropzone.autoDiscover = false;    
 const dropzone = $("#image").dropzone({ 
-    // init: function() {
-    //     this.on('addedfile', function(file) {
-    //         if (this.files.length > 1) {
-    //             this.removeFile(this.files[0]);
-    //         }
-    //     });
-    // },
     url:  "{{ route('temp-images.create') }}",
     maxFiles: 10,
     paramName: 'image',
@@ -279,18 +268,26 @@ const dropzone = $("#image").dropzone({
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     }, success: function(file, response){
         // $("#image_id").val(response.image_id);
-        console.log(response)
+        // console.log(response)
 
-        var html = `<div class="col-md-3"><div class="card">
+        var html = `<div class="col-md-3" id="  image-row-${response.image_id}"><div class="card">
                  <input type="hidden" name="image_array[]" value="${response.image_id}">
                 <img src="${response.ImagePath}" class="card-img-top" alt="...">
                 <div class="card-body">
-                    <a href="#" class="btn btn-danger">Delete</a>
+                    <a href="javascript:void(0)" onclick="deleteImage(${response.image_id})" class="btn btn-danger">Delete</a>
                 </div>
             </div></div>`;
+            alert(html);
              $("#product-gallery").append(html);
 
+    },
+    complete: function(file){
+        this.removeFile(file);
     }
 });
+
+function deleteImage(id){
+    $("#image-row-"+id).remove();
+}
 </script>
 @endsection
