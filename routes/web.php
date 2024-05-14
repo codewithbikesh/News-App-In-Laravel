@@ -2,9 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\admin\AdminLoginController;
-use App\Http\Controllers\admin\BrandController;
 use App\Http\Controllers\admin\CategoryController;
-use App\Http\Controllers\admin\ProductController;
+use App\Http\Controllers\admin\NewsController;
 use App\Http\Controllers\admin\HomeController;
 use App\Http\Controllers\admin\ProductSubCategoryController;
 use App\Http\Controllers\admin\SubCategoryController;
@@ -44,33 +43,15 @@ Route::group(['prefix' => 'admin'],function(){
         Route::get('/categories/{category}/edit',[CategoryController::class,'edit'])->name('categories.edit');
         Route::put('/categories/{category}',[CategoryController::class,'update'])->name('categories.update');
         Route::delete('/categories/{category}',[CategoryController::class,'destory'])->name('categories.delete');
-        // temp-images.create temp-images.create temp-images.create temp-images.create temp-images.create temp-images.create
-        Route::post('/upload-temp-image',[TempImagesController::class,'create'])->name('temp-images.create');
-
-        // Sub_Category Routes Sub_Category Routes Sub_Category Routes Sub_Category Routes Sub_Category Routes Sub_Category Routes 
-        Route::get('/sub-categories/create',[SubCategoryController::class,'create'])->name('sub-categories.create');
-        Route::post('/sub-categories',[SubCategoryController::class,'store'])->name('sub-categories.store');
-        Route::get('/sub-categories',[SubCategoryController::class,'index'])->name('sub-categories.index');
-        Route::get('/sub-categories/{subCategory}/edit',[SubCategoryController::class,'edit'])->name('sub-categories.edit');
-        Route::put('/sub-categories/{subCategory}',[SubCategoryController::class,'update'])->name('sub-categories.update');
-        Route::delete('/sub-categories/{subCategory}',[SubCategoryController::class,'destory'])->name('sub-categories.delete');
-
-        // Brands Routes  Brands Routes   Brands Routes  Brands Routes  Brands Routes  Brands Routes  Brands Routes  Brands Routes  Brands Routes 
-        Route::get('/brands/create',[BrandController::class,'create'])->name('brands.create');
-        Route::post('brands',[BrandController::class,'store'])->name('brands.store');
-        Route::get('brands',[BrandController::class,'index'])->name('brands.index');
-        Route::get('/brands/{brand}/edit',[BrandController::class,'edit'])->name('brands.edit');
-        Route::put('/brands/{brand}',[BrandController::class,'update'])->name('brands.update');
-        Route::delete('/brands/{brand}',[BrandController::class,'destroy'])->name('brands.delete');
    
-
-        // Product Routes Product Routes Product Routes Product Routes Product Routes Product Routes Product Routes Product Routes Product
-        Route::get('/products',[ProductController::class,'index'])->name('products.index');
-        Route::get('/products/create',[ProductController::class,'create'])->name('products.create');
-        Route::post('products',[ProductController::class,'store'])->name('products.store');
-
-        Route::get('/product-subcategories',[ProductSubCategoryController::class,'index'])->name('product-subcategories.index');
-
+       
+        // News routes from here 
+        Route::get('/news',[NewsController::class,'index'])->name('news.index');
+        Route::get('/news/create',[NewsController::class,'create'])->name('news.create');
+        Route::post('news',[NewsController::class,'store'])->name('news.store');
+        Route::get('/news/{new}/edit',[NewsController::class,'edit'])->name('news.edit');
+        Route::put('/news/{new}',[NewsController::class,'update'])->name('news.update');
+        Route::delete('/news/{new}',[NewsController::class,'destory'])->name('news.delete');
         Route::get('/getSlug',function(Request $request){
             $slug = '';
           if(!empty($request->title)){

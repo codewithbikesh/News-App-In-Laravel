@@ -6,9 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Category;
-use App\Models\TempImage;
 use Illuminate\Support\Facades\File;
-// use Image;
 class CategoryController extends Controller
 {
    public function index(Request $request){
@@ -34,31 +32,7 @@ class CategoryController extends Controller
             $category = new Category();
             $category->name = $request->name;
             $category->slug = $request->slug;
-            $category->status = $request->status;
             $category->save();
-
-            // Save Image Here 
-            if(!empty($request->image_id)){
-              $tempImage = TempImage::find($request->image_id);
-              $extArray = explode('.',$tempImage->name);
-              $ext = last($extArray);
-
-              $newImageName = $category->id.'.'.$ext;
-              $sPath = public_path().'/temp/'.$tempImage->name;
-              $dPath = public_path().'/uploads/category/'.$newImageName;
-              File::copy($sPath,$dPath);
-
-              // Generate Image Thumbnail 
-              // $dPath = public_path().'/uploads/category/thumb/'.$newImageName;
-              // $img = Image::make($sPath);
-              // $img->resize(450, 600);
-              // $img->save($dPath);
-
-              $category->image = $newImageName;
-              $category->save();
-            }
-
-
             $request->session()->flash('success', 'Category added successfully');
              
             return response()->json([
@@ -82,7 +56,9 @@ class CategoryController extends Controller
     return view('admin.categories.edit',compact('category'));
 
    }
-
+ 
+  //  update the data through this code 
+  //  update the data through this code 
    public function update($categoryID, Request $request){
     $category = Category::find($categoryID);
     if(empty($category)){
@@ -99,37 +75,9 @@ class CategoryController extends Controller
       'slug' => 'required|unique:categories,slug,'.$category->id.',id',
     ]);
     if($validator->passes()){
-      // $category = new Category();
       $category->name = $request->name;
       $category->slug = $request->slug;
-      $category->status = $request->status;
       $category->save();
-      $oldImage = $category->image;
-
-      // Save Image Here 
-      if(!empty($request->image_id)){
-        $tempImage = TempImage::find($request->image_id);
-        $extArray = explode('.',$tempImage->name);
-        $ext = last($extArray);
-
-        $newImageName = $category->id.'-'.time().'.'.$ext;
-        $sPath = public_path().'/temp/'.$tempImage->name;
-        $dPath = public_path().'/uploads/category/'.$newImageName;
-        File::copy($sPath,$dPath);
-
-        // Generate Image Thumbnail 
-        // $dPath = public_path().'/uploads/category/thumb/'.$newImageName;
-        // $img = Image::make($sPath);
-        // $img->resize(450, 600);
-        // $img->save($dPath);
-
-        $category->image = $newImageName;
-        $category->save();
-      }
-
-      //Delete old image here 
-      File::delete(public_path().'/uploads/category/'.$oldImage);
-
       $request->session()->flash('success', 'Category updated successfully');
        
       return response()->json([
@@ -154,7 +102,7 @@ class CategoryController extends Controller
     }
 
     //Delete old image here 
-    File::delete(public_path().'/uploads/category/'.$category->image);
+    // File::delete(public_path().'/uploads/category/'.$category->image);
 
     $category->delete();
 
